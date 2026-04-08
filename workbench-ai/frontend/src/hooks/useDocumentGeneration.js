@@ -9,7 +9,7 @@ export function useDocumentGeneration() {
     setStatus("loading");
     setError(null);
     try {
-      const res = await fetch("http://localhost:8000/documents/generate", {
+      const res = await fetch("/api/documents/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ document_type: documentType, employee }),

@@ -12,7 +12,7 @@ export default function App() {
   const [configError, setConfigError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/documents/config")
+    fetch("/api/documents/config")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load document configuration");
         return res.json();
