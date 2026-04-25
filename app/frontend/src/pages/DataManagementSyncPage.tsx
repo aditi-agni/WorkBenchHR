@@ -1,4 +1,5 @@
 import { useCallback, useId, useRef, useState, type ReactNode } from "react";
+import { assetPath } from "../lib/assetPath";
 
 export function DataManagementSyncPage() {
   const [slackOn, setSlackOn] = useState(true);
@@ -43,14 +44,14 @@ export function DataManagementSyncPage() {
         <IntegrationCard
           title="Slack"
           status="Syncing in real-time"
-          icon={<IntegrationLogo src="/integrations/slack.png" />}
+          icon={<IntegrationLogo src={assetPath("/integrations/slack.png")} />}
           on={slackOn}
           onToggle={() => setSlackOn((v) => !v)}
         />
         <IntegrationCard
           title="Google Calendar"
           status="Syncing in hourly"
-          icon={<IntegrationLogo src="/integrations/google-calendar.png" />}
+          icon={<IntegrationLogo src={assetPath("/integrations/google-calendar.png")} />}
           on={googleOn}
           onToggle={() => setGoogleOn((v) => !v)}
         />

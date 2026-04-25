@@ -13,6 +13,10 @@ function isDocumentsPath(pathname: string) {
   return pathname === "/documents";
 }
 
+function isEmployeesPath(pathname: string) {
+  return pathname === "/dashboard/employees";
+}
+
 export function WorkspaceLayout() {
   const { pathname } = useLocation();
   const mainClass = [
@@ -20,6 +24,7 @@ export function WorkspaceLayout() {
     isSampleTemplatesBrowsePath(pathname) ? "wb-dash__main--sample-templates" : "",
     isDashboardPath(pathname) ? "wb-dash__main--dashboard" : "",
     isDocumentsPath(pathname) ? "wb-dash__main--documents" : "",
+    isEmployeesPath(pathname) ? "wb-dash__main--employees" : "",
   ]
     .filter(Boolean)
     .join(" ");

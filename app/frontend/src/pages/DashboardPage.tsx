@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { WorkspaceHeader } from "../components/WorkspaceHeader";
+import { assetPath } from "../lib/assetPath";
 
 const DOC_REMINDER_OPTIONS = [
   { id: "1h", label: "In 1 hour" },
@@ -424,7 +425,7 @@ export function DashboardPage() {
             <article className="wb-dash-card wb-dash-card--attention">
               <div className="wb-dash-card__icon wb-dash-card__icon--doc" aria-hidden>
                 <img
-                  src="/dashboard/D1.png"
+                  src={assetPath("/dashboard/D1.png")}
                   alt=""
                   width={22}
                   height={22}
@@ -454,7 +455,7 @@ export function DashboardPage() {
                     onClick={() => setDocReminderOpen(true)}
                   >
                     <img
-                      src="/dashboard/clock.PNG"
+                      src={assetPath("/dashboard/clock.PNG")}
                       alt=""
                       width={18}
                       height={18}
@@ -480,7 +481,7 @@ export function DashboardPage() {
             <article className="wb-dash-card wb-dash-card--attention">
               <div className="wb-dash-card__icon wb-dash-card__icon--user" aria-hidden>
                 <img
-                  src="/dashboard/d2.png"
+                  src={assetPath("/dashboard/d2.png")}
                   alt=""
                   width={22}
                   height={22}

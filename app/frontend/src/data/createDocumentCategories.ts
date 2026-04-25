@@ -1,3 +1,5 @@
+import { assetPath } from "../lib/assetPath";
+
 export type CreateDocCategoryId =
   | "company"
   | "performance"
@@ -32,42 +34,42 @@ export const CREATE_DOC_CATEGORIES: CreateDocCategoryRow[] = [
     id: "company",
     title: "Company Documents",
     description: "Offer letters, contracts, NDAs",
-    iconSrc: "/create-document/dt1.png",
+    iconSrc: assetPath("/create-document/dt1.png"),
     tags: ["Policy", "Template", "General"],
   },
   {
     id: "performance",
     title: "Performance Management",
     description: "Reviews, feedback forms, KPIs",
-    iconSrc: "/create-document/dt2.png",
+    iconSrc: assetPath("/create-document/dt2.png"),
     tags: ["Template", "Form"],
   },
   {
     id: "payroll",
     title: "Payroll & Compensation",
     description: "Salary, benefits, bonuses",
-    iconSrc: "/create-document/dt3.png",
+    iconSrc: assetPath("/create-document/dt3.png"),
     tags: ["Policy", "Compliance"],
   },
   {
     id: "legal",
     title: "Legal & Policy Documents",
     description: "Handbooks, compliance policies",
-    iconSrc: "/create-document/dt4.png",
+    iconSrc: assetPath("/create-document/dt4.png"),
     tags: ["Policy", "Compliance"],
   },
   {
     id: "hiring",
     title: "Hiring Documents",
     description: "Job postings, interview guides",
-    iconSrc: "/create-document/dt5.png",
+    iconSrc: assetPath("/create-document/dt5.png"),
     tags: ["Template", "Form", "General"],
   },
   {
     id: "employment",
     title: "Changes in Employment",
     description: "Promotions, transfers, terminations",
-    iconSrc: "/create-document/dt6.png",
+    iconSrc: assetPath("/create-document/dt6.png"),
     tags: ["Policy", "Form", "Compliance"],
   },
 ];

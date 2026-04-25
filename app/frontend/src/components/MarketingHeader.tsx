@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { assetPath } from "../lib/assetPath";
 
 const TABS: { id: string; label: string; hash?: string }[] = [
   { id: "home", label: "Home", hash: "#home" },
@@ -25,7 +26,7 @@ export function MarketingHeader({
     <header className="wb-mkt-header">
       <div className="wb-mkt-header__inner">
         <Link to="/" className="wb-mkt-logo">
-          <img src="/branding/logo.png" width={36} height={36} alt="" />
+          <img src={assetPath("/branding/logo.png")} width={36} height={36} alt="" />
           <span className="wb-mkt-logo__text">Workbench HR</span>
         </Link>
 

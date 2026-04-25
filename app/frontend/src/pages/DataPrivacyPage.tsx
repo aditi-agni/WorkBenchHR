@@ -1,26 +1,27 @@
 import { Link, useNavigate } from "react-router-dom";
 import { SkipForNow } from "../components/SkipForNow";
+import { assetPath } from "../lib/assetPath";
 
 const items = [
   {
     title: "1. Core Service Functionality",
     body: "We use employee data, such as names, roles, and tax identifiers, to power essential HR features",
-    image: "/dp1.png",
+    image: assetPath("/dp1.png"),
   },
   {
     title: "2. Analytics & Performance Insights",
     body: "De-identified data helps generate WorkBench Insights, allowing you to track workforce growth",
-    image: "/dp2.png",
+    image: assetPath("/dp2.png"),
   },
   {
     title: "3. Security & Fraud Prevention",
     body: "Login activity and system logs help us detect unauthorized access and maintain security",
-    image: "/dp3.png",
+    image: assetPath("/dp3.png"),
   },
   {
     title: "4. Personalization & Platform Optimization",
     body: "We analyze how you use WorkBench to personalize your dashboard and streamline your workflow",
-    image: "/dp4.png",
+    image: assetPath("/dp4.png"),
   },
 ];
 

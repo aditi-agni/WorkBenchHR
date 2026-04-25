@@ -97,10 +97,15 @@ export function WorkspaceSidebar() {
             <IconDashboard />
             <span className="wb-dash__nav-text">Dashboard</span>
           </NavLink>
-          <span className="wb-dash__nav-link wb-dash__nav-link--soon" title="Coming soon">
+          <NavLink
+            to="/dashboard/employees"
+            className={({ isActive }) =>
+              `wb-dash__nav-link${isActive ? " wb-dash__nav-link--active" : ""}`
+            }
+          >
             <IconEmployees />
             <span className="wb-dash__nav-text">Employees</span>
-          </span>
+          </NavLink>
           <NavLink
             to="/documents"
             className={({ isActive }) =>

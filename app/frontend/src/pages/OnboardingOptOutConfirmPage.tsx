@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { assetPath } from "../lib/assetPath";
 
 const optOutCards = [
   {
-    image: "/oo1.png",
+    image: assetPath("/oo1.png"),
     body: (
       <>
         <strong>Custom Tone Analysis:</strong> The AI will no longer mimic your company&apos;s
@@ -11,7 +12,7 @@ const optOutCards = [
     ),
   },
   {
-    image: "/oo2.png",
+    image: assetPath("/oo2.png"),
     body: (
       <>
         <strong>Policy Auto-fill:</strong> Automated drafting of contracts and handbooks based on
@@ -20,7 +21,7 @@ const optOutCards = [
     ),
   },
   {
-    image: "/oo3.png",
+    image: assetPath("/oo3.png"),
     body: (
       <>
         <strong>Document Tailoring:</strong> You&apos;ll lose the ability to generate

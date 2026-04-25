@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { assetPath } from "../lib/assetPath";
 
 type WorkspaceHeaderProps = {
   title?: string;
@@ -14,7 +15,7 @@ export function WorkspaceHeader({ title, lead }: WorkspaceHeaderProps) {
       <div className="wb-dash__header-actions">
         <Link to="/settings/profile" className="wb-dash__icon-btn" aria-label="Settings">
           <img
-            src="/settings.png"
+            src={assetPath("/settings.png")}
             alt=""
             width={20}
             height={20}

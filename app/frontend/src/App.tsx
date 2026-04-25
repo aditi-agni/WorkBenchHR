@@ -6,7 +6,9 @@ import { CompanyInformationPage } from "./pages/CompanyInformationPage";
 import { DataManagementSyncPage } from "./pages/DataManagementSyncPage";
 import { RolesPermissionsPage } from "./pages/RolesPermissionsPage";
 import { SettingsTriggerNotificationsPage } from "./pages/SettingsTriggerNotificationsPage";
+import { SettingsBillingPage } from "./pages/SettingsBillingPage";
 import { SettingsPlaceholderPage } from "./pages/SettingsPlaceholderPage";
+import { SettingsSecurityPage } from "./pages/SettingsSecurityPage";
 import { SettingsHelpSupportPage } from "./pages/SettingsHelpSupportPage";
 import { SettingsProfilePage } from "./pages/SettingsProfilePage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
@@ -17,6 +19,7 @@ import { OnboardingOptOutConfirmPage } from "./pages/OnboardingOptOutConfirmPage
 import { OnboardingTrainingPage } from "./pages/OnboardingTrainingPage";
 import { TriggerNotificationsPage } from "./pages/TriggerNotificationsPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { EmployeePortalPage } from "./pages/EmployeePortalPage";
 import { SignDocumentsPage } from "./pages/SignDocumentsPage";
 import { CreateDocumentBrowseTemplatesPage } from "./pages/CreateDocumentBrowseTemplatesPage";
 import { CreateDocumentAiPreviewPage } from "./pages/CreateDocumentAiPreviewPage";
@@ -57,6 +60,7 @@ export default function App() {
       <Route path="/design-reference" element={<DesignReferencePage />} />
       <Route element={<WorkspaceLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/employees" element={<EmployeePortalPage />} />
         <Route path="/dashboard/sign-documents" element={<SignDocumentsPage />} />
         <Route path="/hiring" element={<HiringPage />} />
         <Route path="/documents" element={<DocumentsPage />} />
@@ -78,20 +82,14 @@ export default function App() {
         <Route path="profile" element={<SettingsProfilePage />} />
         <Route path="company" element={<CompanyInformationPage />} />
         <Route path="roles" element={<RolesPermissionsPage />} />
-        <Route
-          path="billing"
-          element={<SettingsPlaceholderPage title="Plan & Billing" />}
-        />
+        <Route path="billing" element={<SettingsBillingPage />} />
         <Route path="data" element={<DataManagementSyncPage />} />
         <Route path="trigger-notifications" element={<SettingsTriggerNotificationsPage />} />
         <Route
           path="employees"
           element={<SettingsPlaceholderPage title="Manage Employees" />}
         />
-        <Route
-          path="security"
-          element={<SettingsPlaceholderPage title="Password & Security" />}
-        />
+        <Route path="security" element={<SettingsSecurityPage />} />
         <Route path="help" element={<SettingsHelpSupportPage />} />
         <Route index element={<Navigate to="profile" replace />} />
       </Route>

@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MarketingHeader } from "../components/MarketingHeader";
+import { assetPath } from "../lib/assetPath";
 
 const statCards = [
   {
@@ -177,7 +178,7 @@ export function WelcomePage() {
               <div className="wb-welcome__title-row">
                 <h1 className="wb-welcome__title-text">Welcome to Workbench HR</h1>
                 <img
-                  src="/branding/logo.png"
+                  src={assetPath("/branding/logo.png")}
                   width={48}
                   height={48}
                   alt=""

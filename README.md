@@ -1,6 +1,20 @@
 # WorkBenchHR
 Building an AI-powered platform for HR specialists at small businesses
 
+## Frontend deployment (GitHub Pages)
+
+This repo publishes the Vite frontend from `app/frontend` with the GitHub
+Actions workflow in `.github/workflows/pages.yml`.
+
+In GitHub, open **Settings -> Pages** and set **Source** to **GitHub Actions**.
+Then push to `main` or run the workflow manually from the **Actions** tab.
+
+The site will be served from:
+
+```text
+https://aditi-agni.github.io/WorkBenchHR/
+```
+
 ## Database foundation (Supabase)
 
 The executable MVP schema lives in:
