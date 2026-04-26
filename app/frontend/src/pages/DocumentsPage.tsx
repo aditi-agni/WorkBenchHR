@@ -448,7 +448,9 @@ export function DocumentsPage() {
                               </button>
                             </span>
                           ) : (
-                            <span className="wb-docs-table__name">{r.name}</span>
+                            <span className="wb-docs-table__name" title={r.name}>
+                              {r.name}
+                            </span>
                           )}
                         </div>
                       </td>

@@ -20,6 +20,7 @@ import { OnboardingTrainingPage } from "./pages/OnboardingTrainingPage";
 import { TriggerNotificationsPage } from "./pages/TriggerNotificationsPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EmployeePortalPage } from "./pages/EmployeePortalPage";
+import { EmployeeProfilePage } from "./pages/EmployeeProfilePage";
 import { SignDocumentsPage } from "./pages/SignDocumentsPage";
 import { CreateDocumentBrowseTemplatesPage } from "./pages/CreateDocumentBrowseTemplatesPage";
 import { CreateDocumentAiPreviewPage } from "./pages/CreateDocumentAiPreviewPage";
@@ -29,6 +30,8 @@ import { CreateDocumentDraftPage } from "./pages/CreateDocumentDraftPage";
 import { CreateDocumentMethodPage } from "./pages/CreateDocumentMethodPage";
 import { CreateDocumentSelectTemplatePage } from "./pages/CreateDocumentSelectTemplatePage";
 import { DocumentsPage } from "./pages/DocumentsPage";
+import { HiringApplicantDetailPage } from "./pages/HiringApplicantDetailPage";
+import { HiringApplicantsPage } from "./pages/HiringApplicantsPage";
 import { HiringPage } from "./pages/HiringPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { TermsOfServicePage } from "./pages/TermsOfServicePage";
@@ -60,8 +63,11 @@ export default function App() {
       <Route path="/design-reference" element={<DesignReferencePage />} />
       <Route element={<WorkspaceLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard/employees/:employeeId" element={<EmployeeProfilePage />} />
         <Route path="/dashboard/employees" element={<EmployeePortalPage />} />
         <Route path="/dashboard/sign-documents" element={<SignDocumentsPage />} />
+        <Route path="/hiring/jobs/:jobId/applicants/:applicantId" element={<HiringApplicantDetailPage />} />
+        <Route path="/hiring/jobs/:jobId" element={<HiringApplicantsPage />} />
         <Route path="/hiring" element={<HiringPage />} />
         <Route path="/documents" element={<DocumentsPage />} />
         <Route

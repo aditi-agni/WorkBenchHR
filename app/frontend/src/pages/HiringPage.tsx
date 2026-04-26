@@ -1,36 +1,7 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { WorkspaceHeader } from "../components/WorkspaceHeader";
-
-type Posting = {
-  id: string;
-  title: string;
-  datePosted: string;
-  timeline: string;
-  applicants: number;
-  progress: number;
-  risk: boolean;
-};
-
-const ALL_POSTINGS: Posting[] = [
-  {
-    id: "1",
-    title: "Front of House (FOH) Staff",
-    datePosted: "01/03/2026",
-    timeline: "On-track to meet March 1st Deadline",
-    applicants: 15,
-    progress: 0.78,
-    risk: false,
-  },
-  {
-    id: "2",
-    title: "Culinary Lead",
-    datePosted: "02/10/2026",
-    timeline: "At-Risk, Missed 48hr contact goal",
-    applicants: 4,
-    progress: 0.38,
-    risk: true,
-  },
-];
+import { JOB_POSTINGS } from "../lib/hiringDirectory";
 
 const defaultRoles = {
   headChef: true,
@@ -52,7 +23,7 @@ export function HiringPage() {
 
   const visiblePostings = useMemo(() => {
     if (!roleStatus.active) return [];
-    const list = [...ALL_POSTINGS];
+    const list = [...JOB_POSTINGS];
     if (sortBy === "name") {
       list.sort((a, b) => a.title.localeCompare(b.title));
     } else {
@@ -341,9 +312,9 @@ export function HiringPage() {
                       style={{ width: `${Math.round(p.progress * 100)}%` }}
                     />
                   </div>
-                  <button type="button" className="wb-hiring-card__cta">
+                  <Link to={`/hiring/jobs/${p.id}`} className="wb-hiring-card__cta">
                     View all applicants <span aria-hidden>→</span>
-                  </button>
+                  </Link>
                 </article>
               ))}
             </div>

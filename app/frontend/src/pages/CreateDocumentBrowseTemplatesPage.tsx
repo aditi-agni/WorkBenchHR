@@ -179,7 +179,9 @@ function TemplatePreviewCard({
             <img src={src} alt="" className="wb-create-templates__thumb" width={200} height={262} decoding="async" />
           </span>
           <span className="wb-create-templates__preview-meta">
-            <span className="wb-create-templates__preview-name">{file.name}</span>
+            <span className="wb-create-templates__preview-name" title={file.name}>
+              {file.name}
+            </span>
             <span className="wb-create-templates__preview-row">
               <span className="wb-create-templates__preview-type">PDF</span>
               <span className="wb-create-templates__preview-pages">{file.pageCount} pages</span>

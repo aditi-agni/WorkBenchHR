@@ -14,7 +14,7 @@ function isDocumentsPath(pathname: string) {
 }
 
 function isEmployeesPath(pathname: string) {
-  return pathname === "/dashboard/employees";
+  return pathname === "/dashboard/employees" || pathname.startsWith("/dashboard/employees/");
 }
 
 export function WorkspaceLayout() {
