@@ -61,7 +61,7 @@ export function SignUpPage() {
       return;
     }
 
-    navigate("/onboarding/goal");
+    navigate(`/confirm-email?email=${encodeURIComponent(email)}`);
   }
 
   return (

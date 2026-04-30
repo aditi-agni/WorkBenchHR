@@ -11,6 +11,7 @@ import { SettingsPlaceholderPage } from "./pages/SettingsPlaceholderPage";
 import { SettingsSecurityPage } from "./pages/SettingsSecurityPage";
 import { SettingsHelpSupportPage } from "./pages/SettingsHelpSupportPage";
 import { SettingsProfilePage } from "./pages/SettingsProfilePage";
+import { ConfirmEmailPage } from "./pages/ConfirmEmailPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -47,6 +48,7 @@ export default function App() {
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/confirm-email" element={<ConfirmEmailPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/signup" element={<SignUpPage />} />
