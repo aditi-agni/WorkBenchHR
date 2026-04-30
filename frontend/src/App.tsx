@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { DataPrivacyPage } from "./pages/DataPrivacyPage";
 import { DesignReferencePage } from "./pages/DesignReferencePage";
 import { GoalSelectPage } from "./pages/GoalSelectPage";
+import { OnboardingProfilePage } from "./pages/OnboardingProfilePage";
 import { CompanyInformationPage } from "./pages/CompanyInformationPage";
 import { DataManagementSyncPage } from "./pages/DataManagementSyncPage";
 import { RolesPermissionsPage } from "./pages/RolesPermissionsPage";
@@ -52,6 +53,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/onboarding/profile" element={<OnboardingProfilePage />} />
       <Route path="/onboarding/goal" element={<GoalSelectPage />} />
       <Route path="/onboarding/privacy" element={<DataPrivacyPage />} />
       <Route path="/onboarding/learning" element={<OnboardingLearningPage />} />

@@ -1,6 +1,8 @@
 import { FormEvent, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { fetchProfile, upsertProfile, type Profile } from "../lib/profile";
 
 const PHONE_COUNTRIES = [
   { id: "us", dial: "+1", flag: "🇺🇸", name: "United States" },
@@ -43,7 +45,7 @@ function DeleteAccountConfirmModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const p = password.trim();
     if (!p) {
@@ -51,6 +53,7 @@ function DeleteAccountConfirmModal({
       return;
     }
     setError(null);
+    await supabase.auth.signOut();
     onClose();
     navigate("/login", { replace: true });
   };
@@ -87,8 +90,7 @@ function DeleteAccountConfirmModal({
           </ul>
         </div>
         <p className="wb-dash-reminder__lede wb-profile-delete-modal__hint">
-          If you still want to delete your account, type your <strong>password</strong> below to confirm it is really
-          you.
+          If you still want to delete your account, type your <strong>password</strong> below to confirm it is really you.
         </p>
         <form onSubmit={handleSubmit}>
           <div className="wb-profile-delete-modal__field">
@@ -132,6 +134,38 @@ function DeleteAccountConfirmModal({
 export function SettingsProfilePage() {
   const navigate = useNavigate();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) { navigate("/login", { replace: true }); return; }
+      setUserId(user.id);
+      const p = await fetchProfile(user.id);
+      setProfile(p);
+      setLoading(false);
+    });
+  }, [navigate]);
+
+  async function handleSaveField(field: keyof Profile, value: string) {
+    if (!userId) return;
+    const updated = { ...profile, id: userId, [field]: value } as Profile;
+    setProfile(updated);
+    await upsertProfile({ id: userId, [field]: value });
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate("/login", { replace: true });
+  }
+
+  const fullName = [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "Your Name";
+  const roleDisplay = [profile?.company_name, profile?.role_title].filter(Boolean).join(" | ") || "";
+
+  if (loading) {
+    return <div className="wb-profile" style={{ padding: "2rem" }}>Loading…</div>;
+  }
 
   return (
     <div className="wb-profile">
@@ -148,7 +182,7 @@ export function SettingsProfilePage() {
       <div className="wb-profile__identity">
         <div className="wb-profile__avatar-wrap">
           <img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face"
+            src={profile?.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&size=200&background=2d6a4f&color=fff`}
             width={120}
             height={120}
             alt=""
@@ -159,8 +193,8 @@ export function SettingsProfilePage() {
           </button>
         </div>
         <div className="wb-profile__name-block">
-          <h1 className="wb-profile__name">Stacy Hammer</h1>
-          <p className="wb-profile__role">eatunique | Human Resources Admin</p>
+          <h1 className="wb-profile__name">{fullName}</h1>
+          {roleDisplay ? <p className="wb-profile__role">{roleDisplay}</p> : null}
         </div>
       </div>
 
@@ -170,12 +204,36 @@ export function SettingsProfilePage() {
           <p>Add your personal information</p>
         </header>
         <div className="wb-profile__grid">
-          <ProfileField label="First Name" value="Stacey" />
-          <ProfileField label="Last Name" value="Hammer" />
-          <ProfileField label="Email Address" value="stacy.hammer@eatunique.com" />
-          <ProfilePhoneField label="Mobile Number" defaultCountryId="us" defaultNational="443-515-8476" />
-          <ProfileField label="Employee ID" value="37485960" locked />
-          <ProfileField label="Date of Hire" value="03/23/2021" locked />
+          <ProfileField
+            label="First Name"
+            value={profile?.first_name ?? ""}
+            onSave={(v) => handleSaveField("first_name", v)}
+          />
+          <ProfileField
+            label="Last Name"
+            value={profile?.last_name ?? ""}
+            onSave={(v) => handleSaveField("last_name", v)}
+          />
+          <ProfileField
+            label="Email Address"
+            value={profile?.email ?? ""}
+            onSave={(v) => handleSaveField("email", v)}
+          />
+          <ProfilePhoneField
+            label="Mobile Number"
+            value={profile?.mobile_number ?? ""}
+            onSave={(v) => handleSaveField("mobile_number", v)}
+          />
+          <ProfileField
+            label="Employee ID"
+            value={profile?.employee_id ?? ""}
+            locked
+          />
+          <ProfileField
+            label="Date of Hire"
+            value={profile?.date_of_hire ?? ""}
+            locked
+          />
         </div>
       </section>
 
@@ -184,7 +242,7 @@ export function SettingsProfilePage() {
           <button
             type="button"
             className="wb-btn wb-btn--outline"
-            onClick={() => navigate("/login", { replace: true })}
+            onClick={handleSignOut}
           >
             Sign out
           </button>
@@ -196,7 +254,7 @@ export function SettingsProfilePage() {
             Delete Account
           </button>
         </div>
-        <p className="wb-profile__last-login">Last Login: 03/29/2026 7:10AM EST</p>
+        <p className="wb-profile__last-login">Last Login: {new Date().toLocaleDateString()}</p>
       </footer>
 
       <DeleteAccountConfirmModal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} />
@@ -210,21 +268,28 @@ function countryById(id: (typeof PHONE_COUNTRIES)[number]["id"]) {
 
 export function ProfilePhoneField({
   label,
-  defaultCountryId,
-  defaultNational,
+  value,
+  onSave,
 }: {
   label: string;
-  defaultCountryId: (typeof PHONE_COUNTRIES)[number]["id"];
-  defaultNational: string;
+  value: string;
+  onSave?: (value: string) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [countryId, setCountryId] = useState(defaultCountryId);
-  const [national, setNational] = useState(defaultNational);
+  const [countryId, setCountryId] = useState<(typeof PHONE_COUNTRIES)[number]["id"]>("us");
+  const [national, setNational] = useState(value);
   const countrySelectId = useId();
   const nationalInputId = useId();
   const legendId = `${nationalInputId}-legend`;
   const country = countryById(countryId);
-  const displayValue = `${country.flag} ${country.dial} ${national}`;
+  const displayValue = national ? `${country.flag} ${country.dial} ${national}` : "";
+
+  useEffect(() => { setNational(value); }, [value]);
+
+  function handleDone() {
+    setIsEditing(false);
+    onSave?.(`${country.dial} ${national}`);
+  }
 
   return (
     <div className="wb-profile-field">
@@ -235,7 +300,7 @@ export function ProfilePhoneField({
           className="wb-profile-field__edit"
           aria-pressed={isEditing}
           aria-label={isEditing ? `Stop editing ${label}` : `Edit ${label}`}
-          onClick={() => setIsEditing((v) => !v)}
+          onClick={() => isEditing ? handleDone() : setIsEditing(true)}
         >
           {isEditing ? "Done" : "Edit"} ✎
         </button>
@@ -247,27 +312,19 @@ export function ProfilePhoneField({
           aria-labelledby={legendId}
         >
           <div className="wb-profile-phone">
-            <label htmlFor={countrySelectId} className="visually-hidden">
-              Country calling code
-            </label>
+            <label htmlFor={countrySelectId} className="visually-hidden">Country calling code</label>
             <select
               id={countrySelectId}
               className="wb-profile-phone__select"
               value={countryId}
-              onChange={(e) =>
-                setCountryId(e.target.value as (typeof PHONE_COUNTRIES)[number]["id"])
-              }
+              onChange={(e) => setCountryId(e.target.value as (typeof PHONE_COUNTRIES)[number]["id"])}
               aria-label="Country calling code"
             >
               {PHONE_COUNTRIES.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.flag} {c.dial}
-                </option>
+                <option key={c.id} value={c.id}>{c.flag} {c.dial}</option>
               ))}
             </select>
-            <label htmlFor={nationalInputId} className="visually-hidden">
-              Phone number without country code
-            </label>
+            <label htmlFor={nationalInputId} className="visually-hidden">Phone number without country code</label>
             <input
               id={nationalInputId}
               type="tel"
@@ -299,12 +356,23 @@ export function ProfileField({
   label,
   value,
   locked,
+  onSave,
 }: {
   label: string;
   value: string;
   locked?: boolean;
+  onSave?: (value: string) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => { setLocalValue(value); }, [value]);
+
+  function handleDone() {
+    setIsEditing(false);
+    onSave?.(localValue);
+  }
+
   const readOnly = Boolean(locked) || !isEditing;
 
   return (
@@ -317,7 +385,7 @@ export function ProfileField({
             className="wb-profile-field__edit"
             aria-pressed={isEditing}
             aria-label={isEditing ? `Stop editing ${label}` : `Edit ${label}`}
-            onClick={() => setIsEditing((v) => !v)}
+            onClick={() => isEditing ? handleDone() : setIsEditing(true)}
           >
             {isEditing ? "Done" : "Edit"} ✎
           </button>
@@ -331,15 +399,12 @@ export function ProfileField({
       >
         <input
           className="wb-input wb-input--profile"
-          defaultValue={value}
+          value={localValue}
+          onChange={(e) => setLocalValue(e.target.value)}
           readOnly={readOnly}
           aria-readonly={readOnly}
         />
-        {locked ? (
-          <span className="wb-profile-field__lock" aria-hidden>
-            🔒
-          </span>
-        ) : null}
+        {locked ? <span className="wb-profile-field__lock" aria-hidden>🔒</span> : null}
       </div>
     </label>
   );
