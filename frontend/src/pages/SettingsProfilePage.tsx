@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useId, useState } from "react";
+import { FormEvent, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -137,6 +137,9 @@ export function SettingsProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -153,6 +156,31 @@ export function SettingsProfilePage() {
     const updated = { ...profile, id: userId, [field]: value } as Profile;
     setProfile(updated);
     await upsertProfile({ id: userId, [field]: value });
+  }
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !userId) return;
+    setUploading(true);
+    setAvatarError(null);
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log("Upload session:", session);
+    const ext = file.name.split(".").pop();
+    const path = `${userId}/avatar.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("Avatars")
+      .upload(path, file, { upsert: true });
+    if (uploadError) {
+      console.error("Avatar upload error:", uploadError);
+      setAvatarError(uploadError.message);
+    } else {
+      const { data } = supabase.storage.from("Avatars").getPublicUrl(path);
+      const url = `${data.publicUrl}?t=${Date.now()}`;
+      await upsertProfile({ id: userId, avatar_url: url });
+      setProfile((prev) => prev ? { ...prev, avatar_url: url } : prev);
+    }
+    setUploading(false);
+    e.target.value = "";
   }
 
   async function handleSignOut() {
@@ -188,10 +216,26 @@ export function SettingsProfilePage() {
             alt=""
             className="wb-profile__avatar"
           />
-          <button type="button" className="wb-profile__avatar-edit" aria-label="Edit photo">
-            ✎
+          <button
+            type="button"
+            className="wb-profile__avatar-edit"
+            aria-label="Edit photo"
+            disabled={uploading}
+            onClick={() => avatarInputRef.current?.click()}
+          >
+            {uploading ? "…" : "✎"}
           </button>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleAvatarChange}
+          />
         </div>
+        {avatarError && (
+          <p style={{ color: "red", fontSize: "0.8rem", marginTop: "0.5rem" }}>{avatarError}</p>
+        )}
         <div className="wb-profile__name-block">
           <h1 className="wb-profile__name">{fullName}</h1>
           {roleDisplay ? <p className="wb-profile__role">{roleDisplay}</p> : null}
