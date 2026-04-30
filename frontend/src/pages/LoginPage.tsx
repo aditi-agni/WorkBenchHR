@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthHomeLink } from "../components/AuthHomeLink";
 import { BrandMark } from "../components/BrandMark";
 import { supabase } from "../lib/supabase";
+import { fetchProfile } from "../lib/profile";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -33,7 +34,9 @@ export function LoginPage() {
     setLoading(false);
 
     if (!authError) {
-      navigate("/dashboard");
+      const { data: { user } } = await supabase.auth.getUser();
+      const profile = user ? await fetchProfile(user.id) : null;
+      navigate(profile?.first_name ? "/dashboard" : "/onboarding/profile");
       return;
     }
 
