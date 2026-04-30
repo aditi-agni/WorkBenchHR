@@ -1,55 +1,32 @@
 from __future__ import annotations
 
-import os
 from functools import lru_cache
-from pathlib import Path
 
-from dotenv import load_dotenv
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseModel):
-    """
-    Lazy-loaded environment settings.
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    Importing this module should not fail if .env values are missing;
-    validation happens when `get_settings()` is called.
-    """
+    # Anthropic
+    anthropic_api_key: str = ""
 
-    model_config = ConfigDict(extra="forbid")
+    # Supabase
+    supabase_url: str = ""
+    supabase_key: str = ""
 
-    anthropic_api_key: str | None = None
-    supabase_url: str = Field(..., min_length=1)
-    supabase_key: str = Field(..., min_length=1)
+    # OpenAI — used for embeddings
+    openai_api_key: str = ""
 
+    # Pinecone
+    pinecone_api_key: str = ""
+    pinecone_index_name: str = ""
+    pinecone_index_host: str = ""
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-
-# Load .env once so env-based reads work immediately across modules.
-load_dotenv(dotenv_path=_REPO_ROOT / ".env")
+    # Embedding model override
+    embedding_model: str = "text-embedding-3-small"
 
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
-    supabase_url = os.getenv("SUPABASE_URL", "").strip()
-    supabase_key = os.getenv("SUPABASE_KEY", "").strip()
-
-    missing = []
-    if not supabase_url:
-        missing.append("SUPABASE_URL")
-    if not supabase_key:
-        missing.append("SUPABASE_KEY")
-
-    if missing:
-        missing_list = ", ".join(missing)
-        raise RuntimeError(
-            f"Missing required environment variables in .env: {missing_list}"
-        )
-
-    return Settings(
-        anthropic_api_key=anthropic_api_key or None,
-        supabase_url=supabase_url,
-        supabase_key=supabase_key,
-    )
-
+    return Settings()
