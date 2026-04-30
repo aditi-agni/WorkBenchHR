@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.models.rag import RagIngestRequest, RagIngestResponse, RagQueryRequest, RagQueryResponse
-from app.services.rag_service import ingest_document, ingest_seed_offer_letter, query_documents
+from app.services.rag_service import ingest_document, ingest_seed_offer_letter, ingest_seed_termination_letter, query_documents
 
 router = APIRouter()
 
@@ -21,3 +21,8 @@ def query(request: RagQueryRequest) -> RagQueryResponse:
 @router.post("/ingest-seed-offer-letter", response_model=RagIngestResponse)
 def ingest_seed() -> RagIngestResponse:
     return ingest_seed_offer_letter()
+
+
+@router.post("/ingest-seed-termination-letter", response_model=RagIngestResponse)
+def ingest_seed_termination() -> RagIngestResponse:
+    return ingest_seed_termination_letter()

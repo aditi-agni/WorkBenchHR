@@ -13,7 +13,8 @@ from app.services.chunking_service import chunk_text
 from app.services.embedding_service import embed_text, embed_texts
 from app.services.pinecone_client import get_pinecone_index
 
-_SEED_FILE = Path(__file__).parent.parent / "rag_seed_data" / "offer_letter.txt"
+_SEED_DIR = Path(__file__).parent.parent / "rag_seed_data"
+_SEED_FILE = _SEED_DIR / "offer_letter.txt"
 
 
 def ingest_document(request: RagIngestRequest) -> RagIngestResponse:
@@ -76,6 +77,17 @@ def ingest_seed_offer_letter() -> RagIngestResponse:
         document_id="offer_letter_seed_001",
         document_name="Offer Letter Template",
         document_type="offer_letter",
+        text=text,
+    )
+    return ingest_document(request)
+
+
+def ingest_seed_termination_letter() -> RagIngestResponse:
+    text = (_SEED_DIR / "termination_letter.txt").read_text(encoding="utf-8")
+    request = RagIngestRequest(
+        document_id="termination_letter_seed_001",
+        document_name="Termination Letter Template",
+        document_type="termination_letter",
         text=text,
     )
     return ingest_document(request)

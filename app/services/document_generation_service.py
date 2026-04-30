@@ -4,6 +4,7 @@ import anthropic
 
 from app.models.document_generation import DocumentGenerationRequest, DocumentGenerationResponse
 from app.prompts.offer_letter_prompt import build_offer_letter_prompt
+from app.prompts.termination_letter_prompt import build_termination_letter_prompt
 from app.services.config import get_settings
 from app.services.supabase_client import get_supabase_client
 
@@ -28,11 +29,14 @@ def _retrieve_rag_context(document_type: str) -> str:
 
 
 async def generate_document(request: DocumentGenerationRequest) -> DocumentGenerationResponse:
-    if request.document_type != "offer_letter":
-        raise ValueError(f"Unsupported document type: {request.document_type}")
-
     rag_context = _retrieve_rag_context(request.document_type)
-    prompt = build_offer_letter_prompt(request.model_dump()) + rag_context
+
+    if request.document_type == "offer_letter":
+        prompt = build_offer_letter_prompt(request.model_dump()) + rag_context
+    elif request.document_type == "termination_letter":
+        prompt = build_termination_letter_prompt(request.model_dump(), rag_context)
+    else:
+        raise ValueError(f"Unsupported document type: {request.document_type}")
 
     settings = get_settings()
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key)

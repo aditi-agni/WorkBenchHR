@@ -10,7 +10,12 @@ class DocumentGenerationRequest(BaseModel):
     start_date: str
     manager_name: str
     company_name: str
-    document_type: str  # only "offer_letter" supported
+    document_type: str  # "offer_letter" or "termination_letter"
+    # termination_letter fields
+    termination_date: str | None = None
+    termination_reason: str | None = None
+    final_pay_date: str | None = None
+    return_deadline: str | None = None
 
 
 class DocumentGenerationResponse(BaseModel):
