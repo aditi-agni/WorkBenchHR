@@ -2,12 +2,32 @@ import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthHomeLink } from "../components/AuthHomeLink";
 import { BrandMark } from "../components/BrandMark";
+import { supabase } from "../lib/supabase";
 
 export function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(null);
+
+    const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement).value.trim();
+
+    setLoading(true);
+
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    setLoading(false);
+
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+
     setSubmitted(true);
   }
 
@@ -49,8 +69,13 @@ export function ForgotPasswordPage() {
                   autoComplete="email"
                 />
               </label>
-              <button type="submit" className="wb-btn wb-btn--dark wb-btn--block">
-                Send reset link
+              {error && <p className="wb-form__error">{error}</p>}
+              <button
+                type="submit"
+                className="wb-btn wb-btn--dark wb-btn--block"
+                disabled={loading}
+              >
+                {loading ? "Sending…" : "Send reset link"}
               </button>
             </form>
           )}

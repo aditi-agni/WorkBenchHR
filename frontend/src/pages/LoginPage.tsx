@@ -1,14 +1,53 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthHomeLink } from "../components/AuthHomeLink";
 import { BrandMark } from "../components/BrandMark";
+import { supabase } from "../lib/supabase";
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    navigate("/dashboard");
+    setError(null);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value.trim();
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+    setLoading(false);
+
+    if (!authError) {
+      navigate("/dashboard");
+      return;
+    }
+
+    // Supabase returns "Invalid login credentials" for both wrong password
+    // and non-existent email. Redirect to sign-up so the user can create an account.
+    if (
+      authError.message.toLowerCase().includes("invalid login credentials") ||
+      authError.message.toLowerCase().includes("user not found")
+    ) {
+      navigate(`/signup?email=${encodeURIComponent(email)}`);
+      return;
+    }
+
+    setError(authError.message);
   }
 
   return (
@@ -38,6 +77,7 @@ export function LoginPage() {
                 name="email"
                 type="email"
                 autoComplete="email"
+                required
               />
             </label>
             <label className="wb-field">
@@ -47,8 +87,10 @@ export function LoginPage() {
                 name="password"
                 type="password"
                 autoComplete="current-password"
+                required
               />
             </label>
+            {error && <p className="wb-form__error">{error}</p>}
             <div className="wb-split__form-row">
               <label className="wb-split__remember">
                 <input type="checkbox" name="remember" defaultChecked />
@@ -58,8 +100,12 @@ export function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <button type="submit" className="wb-btn wb-btn--dark wb-btn--block">
-              Sign in
+            <button
+              type="submit"
+              className="wb-btn wb-btn--dark wb-btn--block"
+              disabled={loading}
+            >
+              {loading ? "Signing in…" : "Sign in"}
             </button>
           </form>
           <p className="wb-split__footer">
