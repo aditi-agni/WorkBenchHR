@@ -72,7 +72,7 @@ export function WorkspaceSidebar() {
   return (
     <aside className="wb-dash__sidebar" aria-label="Workspace navigation">
       <div className="wb-dash__brand">
-        <BrandMark to="/" size={34} wordmarkClassName="wb-dash__brand-text" />
+        <BrandMark to="/dashboard" size={34} wordmarkClassName="wb-dash__brand-text" />
       </div>
 
       <div className="wb-dash__cta-row">
