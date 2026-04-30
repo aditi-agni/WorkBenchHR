@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     # Anthropic
     anthropic_api_key: str = ""
 
-    # Supabase
+    # Supabase (required for backend startup)
     supabase_url: str = ""
     supabase_key: str = ""
 
@@ -29,4 +29,14 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+
+    missing = [
+        name
+        for name, val in [("SUPABASE_URL", settings.supabase_url), ("SUPABASE_KEY", settings.supabase_key)]
+        if not val.strip()
+    ]
+    if missing:
+        raise RuntimeError(f"Missing required environment variables in .env: {', '.join(missing)}")
+
+    return settings
